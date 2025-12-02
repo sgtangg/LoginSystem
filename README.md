@@ -23,7 +23,7 @@ This login system supports multiple authentication techniques:
 
 ```bash
 # Clone the repository
-git clone https://github.com/sgtangg/LoginSystem.git
+git clone <repository-url>
 cd LoginSystem
 
 # Install dependencies

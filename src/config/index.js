@@ -5,6 +5,16 @@
 
 require('dotenv').config();
 
+// Validate JWT secret in production
+const getJWTSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret && process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET environment variable is required in production');
+  }
+  // Use a development-only default that clearly indicates it should be changed
+  return secret || 'DEVELOPMENT_ONLY_SECRET_CHANGE_IN_PRODUCTION';
+};
+
 module.exports = {
   // Server Configuration
   port: process.env.PORT || 3000,
@@ -12,7 +22,7 @@ module.exports = {
   
   // JWT Configuration
   jwt: {
-    secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production',
+    secret: getJWTSecret(),
     accessTokenExpiry: process.env.JWT_ACCESS_EXPIRY || '15m',
     refreshTokenExpiry: process.env.JWT_REFRESH_EXPIRY || '7d',
   },

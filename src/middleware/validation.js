@@ -5,6 +5,25 @@
 
 const { body, validationResult } = require('express-validator');
 
+// Common validation messages
+const TOTP_MESSAGES = {
+  LENGTH: 'TOTP token must be 6 digits',
+  NUMERIC: 'TOTP token must contain only numbers',
+};
+
+/**
+ * Create TOTP token validation chain
+ * @param {string} fieldName - The field name to validate
+ * @returns {Object} Express validator chain
+ */
+const createTOTPValidation = (fieldName = 'token') => {
+  return body(fieldName)
+    .isLength({ min: 6, max: 6 })
+    .withMessage(TOTP_MESSAGES.LENGTH)
+    .isNumeric()
+    .withMessage(TOTP_MESSAGES.NUMERIC);
+};
+
 /**
  * Handle validation errors
  */
@@ -75,11 +94,7 @@ const validateRefreshToken = [
  * Validation for TOTP token
  */
 const validateTOTP = [
-  body('token')
-    .isLength({ min: 6, max: 6 })
-    .withMessage('TOTP token must be 6 digits')
-    .isNumeric()
-    .withMessage('TOTP token must contain only numbers'),
+  createTOTPValidation('token'),
   handleValidationErrors,
 ];
 
@@ -90,11 +105,7 @@ const validate2FALogin = [
   body('tempToken')
     .notEmpty()
     .withMessage('Temporary token is required'),
-  body('token')
-    .isLength({ min: 6, max: 6 })
-    .withMessage('TOTP token must be 6 digits')
-    .isNumeric()
-    .withMessage('TOTP token must contain only numbers'),
+  createTOTPValidation('token'),
   handleValidationErrors,
 ];
 
@@ -116,11 +127,7 @@ const validate2FAEnable = [
   body('secret')
     .notEmpty()
     .withMessage('Secret is required'),
-  body('token')
-    .isLength({ min: 6, max: 6 })
-    .withMessage('TOTP token must be 6 digits')
-    .isNumeric()
-    .withMessage('TOTP token must contain only numbers'),
+  createTOTPValidation('token'),
   handleValidationErrors,
 ];
 
